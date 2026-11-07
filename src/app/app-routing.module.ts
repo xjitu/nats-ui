@@ -1,17 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChannelComponent } from './channelsz/channelsz.component';
-
-import { ServerzComponent } from './serverz/serverz.component';
-import { StorezComponent } from './storez/storez.component';
-import { WebsocketComponent } from './websocket/websocket.component';
+import { OverviewComponent } from './overview/overview.component';
+import { StreamsComponent } from './streams/streams.component';
+import { ConsumersComponent } from './consumers/consumers.component';
+import { ConnectionsComponent } from './connections/connections.component';
 
 const routes: Routes = [
-  {path:'channelz',component:ChannelComponent},
-  {path:'',component:ChannelComponent},
-  {path:'serverz',component:ServerzComponent},
-  {path:'storez',component:StorezComponent},
-  {path:'websocket',component:WebsocketComponent},
+  {path:'overview',component:OverviewComponent},
+  {path:'',pathMatch:'full',redirectTo:'overview'},
+  {path:'streams',component:StreamsComponent},
+  {path:'consumers',component:ConsumersComponent},
+  {path:'connections',component:ConnectionsComponent},
 ];
 
 @NgModule({

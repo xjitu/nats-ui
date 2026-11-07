@@ -1,0 +1,13 @@
+<ng-template #loading><p-card><div class="loading-state"><i class="pi pi-spin pi-spinner"></i> Loading streams…</div></p-card></ng-template>
+<ng-container *ngIf="viewModel$ | async as vm; else loading">
+  <div class="page-header"><div><h1>Streams</h1><p class="muted">JetStream stream state from the monitoring snapshot</p></div><p-button label="Refresh" icon="pi pi-refresh" (onClick)="refresh()"></p-button></div>
+  <p-message *ngIf="vm.snapshot.jsz.error && !vm.snapshot.jsz.data" severity="error" text="JetStream state is unavailable. Check the protected monitoring path."></p-message>
+  <p-message *ngIf="vm.snapshot.jsz.stale" severity="warn" text="Showing the last successful stream snapshot."></p-message>
+  <ng-container *ngIf="!vm.snapshot.jsz.error || vm.snapshot.jsz.data">
+    <p-card *ngIf="!vm.data.streams.length; else streamTable"><div class="empty-state"><i class="pi pi-inbox"></i><span>No streams are reported by JetStream.</span></div></p-card>
+    <ng-template #streamTable><p-table [value]="vm.data.streams" responsiveLayout="scroll" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header"><tr><th>Name</th><th>Account</th><th>Subjects</th><th>Storage</th><th>Messages</th><th>Bytes</th><th>Consumers</th></tr></ng-template>
+      <ng-template pTemplate="body" let-stream><tr><td><strong>{{stream.name}}</strong></td><td>{{stream.account || '—'}}</td><td><span *ngIf="stream.subjects.length; else noSubjects">{{stream.subjects.join(', ')}}</span><ng-template #noSubjects>—</ng-template></td><td>{{stream.storage || '—'}}</td><td>{{formatNumber(stream.messages)}}</td><td>{{formatBytes(stream.bytes)}}</td><td>{{formatNumber(stream.consumerCount)}}</td></tr></ng-template>
+    </p-table></ng-template>
+  </ng-container>
+</ng-container>

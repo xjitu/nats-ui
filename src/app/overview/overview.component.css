@@ -1,0 +1,8 @@
+.page-header { align-items: center; display: flex; justify-content: space-between; margin-bottom: 1rem; gap: 1rem; }
+.page-header h1 { margin: 0; color: #003b66; }
+.muted { color: #667085; margin: .25rem 0 1rem; }
+.metric-line { align-items: center; display: flex; justify-content: space-between; gap: 1rem; margin: .6rem 0; }
+.big-number { color: #003b66; font-size: 2rem; font-weight: 700; }
+.loading-state { align-items: center; display: flex; gap: .6rem; padding: 2rem; }
+.error-text { color: #b42318; display: block; margin-top: .75rem; }
+.refresh-note { text-align: right; }
