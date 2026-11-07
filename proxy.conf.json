@@ -1,0 +1,11 @@
+{
+  "/monitoring": {
+    "target": "http://127.0.0.1:18222",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/monitoring": ""
+    },
+    "logLevel": "warn"
+  }
+}

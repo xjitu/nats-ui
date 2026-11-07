@@ -1,0 +1,13 @@
+<ng-template #loading><p-card><div class="loading-state"><i class="pi pi-spin pi-spinner"></i> Loading connections…</div></p-card></ng-template>
+<ng-container *ngIf="viewModel$ | async as vm; else loading">
+  <div class="page-header"><div><h1>Connections</h1><p class="muted">Open client connections from the NATS monitoring endpoint</p></div><p-button label="Refresh" icon="pi pi-refresh" (onClick)="refresh()"></p-button></div>
+  <p-message *ngIf="vm.snapshot.connz.error && !vm.snapshot.connz.data" severity="error" text="Connection state is unavailable. Check the protected monitoring path."></p-message>
+  <p-message *ngIf="vm.snapshot.connz.stale" severity="warn" text="Showing the last successful connection snapshot."></p-message>
+  <ng-container *ngIf="!vm.snapshot.connz.error || vm.snapshot.connz.data">
+    <p-card *ngIf="!vm.data.connections.length; else connectionTable"><div class="empty-state"><i class="pi pi-inbox"></i><span>No open connections are reported by NATS.</span></div></p-card>
+    <ng-template #connectionTable><p-table [value]="vm.data.connections" responsiveLayout="scroll" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header"><tr><th>ID</th><th>Name</th><th>Endpoint</th><th>Type</th><th>Uptime</th><th>Subscriptions</th><th>Pending</th><th>In / out messages</th><th>Client</th></tr></ng-template>
+      <ng-template pTemplate="body" let-connection><tr><td>{{connection.id ?? '—'}}</td><td>{{connection.name || '—'}}</td><td>{{connection.endpoint || '—'}}<span *ngIf="connection.port">:{{connection.port}}</span></td><td>{{connection.type || connection.kind || '—'}}</td><td>{{connection.uptime || '—'}}</td><td>{{formatNumber(connection.subscriptions)}}</td><td>{{formatBytes(connection.pendingBytes)}}</td><td>{{formatNumber(connection.inMessages)}} / {{formatNumber(connection.outMessages)}}</td><td>{{connection.language || '—'}} {{connection.version || ''}}</td></tr></ng-template>
+    </p-table></ng-template>
+  </ng-container>
+</ng-container>

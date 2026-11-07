@@ -1,0 +1,59 @@
+<ng-template #loading>
+  <p-card><div class="loading-state"><i class="pi pi-spin pi-spinner"></i> Connecting to NATS monitoring…</div></p-card>
+</ng-template>
+
+<ng-container *ngIf="viewModel$ | async as vm; else loading">
+  <div class="page-header">
+    <div><h1>Overview</h1><p class="muted">Read-only NATS Server and JetStream monitoring</p></div>
+    <p-button label="Refresh" icon="pi pi-refresh" (onClick)="refresh()"></p-button>
+  </div>
+
+  <p-message *ngIf="vm.snapshot.health.error && !vm.snapshot.health.data" severity="error"
+    text="Health endpoint is unavailable. Check the protected monitoring proxy or SSH tunnel."></p-message>
+  <p-message *ngIf="vm.snapshot.varz.error && !vm.snapshot.varz.data" severity="error"
+    text="Server metadata is unavailable. The monitoring proxy did not return /varz."></p-message>
+  <p-message *ngIf="vm.snapshot.jsz.error && !vm.snapshot.jsz.data" severity="error"
+    text="JetStream state is unavailable. The monitoring proxy did not return /jsz."></p-message>
+  <p-message *ngIf="vm.snapshot.connz.error && !vm.snapshot.connz.data" severity="error"
+    text="Connection state is unavailable. The monitoring proxy did not return /connz."></p-message>
+  <p-message *ngIf="vm.snapshot.varz.stale || vm.snapshot.jsz.stale || vm.snapshot.connz.stale" severity="warn"
+    text="Some values are stale because the latest refresh failed."></p-message>
+
+  <div class="grid">
+    <div class="col-12 md:col-6 xl:col-4"><p-card header="Health">
+      <div class="metric-line"><span>Status</span><p-tag [severity]="vm.data.healthStatus === 'ok' ? 'success' : 'danger'" [value]="vm.data.healthStatus | uppercase"></p-tag></div>
+      <small *ngIf="vm.snapshot.health.error" class="error-text">{{vm.snapshot.health.error.message}}</small>
+    </p-card></div>
+    <div class="col-12 md:col-6 xl:col-4"><p-card header="Server">
+      <div class="metric-line"><span>Name</span><strong>{{vm.data.server?.name || '—'}}</strong></div>
+      <div class="metric-line"><span>Version</span><strong>{{vm.data.server?.version || '—'}}</strong></div>
+      <div class="metric-line"><span>Uptime</span><strong>{{vm.data.server?.uptime || '—'}}</strong></div>
+    </p-card></div>
+    <div class="col-12 md:col-6 xl:col-4"><p-card header="JetStream">
+      <div class="metric-line"><span>Status</span><p-tag [severity]="vm.data.jetstream?.enabled ? 'success' : 'warning'" [value]="vm.data.jetstream?.enabled ? 'ENABLED' : 'UNAVAILABLE'"></p-tag></div>
+      <div class="metric-line"><span>Meta leader</span><strong>{{vm.data.jetstream?.metaLeader || '—'}}</strong></div>
+    </p-card></div>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 md:col-6 xl:col-3"><p-card header="Connections"><div class="big-number">{{formatNumber(vm.data.server?.connections)}}</div></p-card></div>
+    <div class="col-12 md:col-6 xl:col-3"><p-card header="Subscriptions"><div class="big-number">{{formatNumber(vm.data.server?.subscriptions)}}</div></p-card></div>
+    <div class="col-12 md:col-6 xl:col-3"><p-card header="Streams"><div class="big-number">{{formatNumber(vm.data.jetstream?.streams)}}</div></p-card></div>
+    <div class="col-12 md:col-6 xl:col-3"><p-card header="Consumers"><div class="big-number">{{formatNumber(vm.data.jetstream?.consumers)}}</div></p-card></div>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 md:col-6"><p-card header="Traffic">
+      <div class="metric-line"><span>Messages in / out</span><strong>{{formatNumber(vm.data.server?.inMessages)}} / {{formatNumber(vm.data.server?.outMessages)}}</strong></div>
+      <div class="metric-line"><span>Bytes in / out</span><strong>{{formatBytes(vm.data.server?.inBytes)}} / {{formatBytes(vm.data.server?.outBytes)}}</strong></div>
+      <div class="metric-line"><span>Slow consumers</span><strong>{{formatNumber(vm.data.server?.slowConsumers)}}</strong></div>
+    </p-card></div>
+    <div class="col-12 md:col-6"><p-card header="JetStream storage">
+      <div class="metric-line"><span>Messages</span><strong>{{formatNumber(vm.data.jetstream?.messages)}}</strong></div>
+      <div class="metric-line"><span>Stored bytes</span><strong>{{formatBytes(vm.data.jetstream?.bytes)}}</strong></div>
+      <div class="metric-line"><span>Storage usage</span><strong>{{formatBytes(vm.data.jetstream?.storageBytes)}}</strong></div>
+      <div class="metric-line"><span>Memory usage</span><strong>{{formatBytes(vm.data.jetstream?.memoryBytes)}}</strong></div>
+    </p-card></div>
+  </div>
+  <p class="muted refresh-note">Last response: {{vm.snapshot.fetchedAt | date:'medium'}} · refresh interval: 30 seconds</p>
+</ng-container>

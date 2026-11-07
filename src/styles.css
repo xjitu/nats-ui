@@ -1,1 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+body { background: #f7f9fc; color: #1d2939; margin: 0; }
+.p-menubar { border-radius: 0; }
+.p-card { height: 100%; }
+.p-message { margin-bottom: 1rem; }

@@ -1,84 +1,43 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ChannelComponent } from './channelsz/channelsz.component';
-import { HttpClient, HttpClientModule,HttpClientJsonpModule } from '@angular/common/http';
+import { OverviewComponent } from './overview/overview.component';
+import { StreamsComponent } from './streams/streams.component';
+import { ConsumersComponent } from './consumers/consumers.component';
+import { ConnectionsComponent } from './connections/connections.component';
 
-import {InputTextModule} from 'primeng/inputtext';
-import {ListboxModule} from 'primeng/listbox';
-import {DropdownModule} from 'primeng/dropdown';
-import {CardModule} from 'primeng/card';
-import {SplitButtonModule} from 'primeng/splitbutton';
-import {DialogModule} from 'primeng/dialog';
-import {PanelModule} from 'primeng/panel';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {TableModule} from 'primeng/table';
-import {DividerModule} from 'primeng/divider';
-import {TooltipModule} from 'primeng/tooltip';
-import {MessagesModule} from 'primeng/messages';
-import {MessageModule} from 'primeng/message';
-import {MenubarModule} from 'primeng/menubar';
-import {BadgeModule} from 'primeng/badge';
-import {TagModule } from 'primeng/tag';
-
-import { ServerzComponent } from './serverz/serverz.component';
-import { StorezComponent } from './storez/storez.component';
-
-import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
-import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { WebsocketComponent } from './websocket/websocket.component';
-
-export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient);
-}
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { MenubarModule } from 'primeng/menubar';
+import { MessageModule } from 'primeng/message';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ChannelComponent,
-    ServerzComponent,
-    StorezComponent,
-    WebsocketComponent
+    OverviewComponent,
+    StreamsComponent,
+    ConsumersComponent,
+    ConnectionsComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    FormsModule,
     HttpClientModule,
-    HttpClientJsonpModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      },
-      defaultLanguage: "en"
-    }),
-
-    InputTextModule,
-    ListboxModule,
-    DropdownModule,
+    ButtonModule,
     CardModule,
-    SplitButtonModule,
-    DialogModule,
-    PanelModule,
-    ProgressBarModule,
-    TableModule,
-    DividerModule,
-    TooltipModule,
-    MessagesModule,
-    MessageModule,
     MenubarModule,
-    BadgeModule,
+    MessageModule,
+    TableModule,
     TagModule
-    
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

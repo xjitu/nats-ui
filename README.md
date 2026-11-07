@@ -1,56 +1,52 @@
-# nats-ui
+# NATS JetStream Observability UI
 
-A solution for displaying NATS Streaming data streams in a user-friendly interface
+Angular read-only monitoring UI for NATS Server and JetStream. The application consumes the NATS monitoring endpoints `/healthz`, `/varz`, `/jsz`, and `/connz`; it does not create or mutate streams, consumers, messages, or server configuration.
 
-## :floppy_disk: Installation
+## Development
 
-To install the project, follow these steps:
+Install dependencies and start the Angular development server:
 
-1. Clone the repository: `git clone https://github.com/username/repo.git`
-2. Navigate to the project directory: `cd nats-ui`
-3. Install the dependencies: `npm install`
-4. Add your own NATS Streaming address as shown below in the urls.
-```
-..src/assets/urls.json
-[
-    
-    { "text": "test","url": "http://localhost:8222/streaming"},
-    { "text": "prod","url": "http://localhost:8223/streaming" },
-    ...
-]
+```bash
+npm ci
+npm start
 ```
 
-## :pencil: Usage
+The UI is available at `http://localhost:4200`. Development requests under `/monitoring` are proxied to `http://127.0.0.1:18222`. Establish a protected local tunnel first, for example:
 
-To use the project, follow these steps:
+```bash
+ssh -N -L 18222:127.0.0.1:8222 <operator>@<nats-host>
+```
 
-1. Start the application: `ng serve -o`
-2. Open your web browser and navigate to `http://localhost:4200`
+Replace the placeholders with the approved SSH access path. Do not expose NATS monitoring port `8222` directly to the public network or LAN. The monitoring HTTP surface does not provide an independent authentication boundary, so use an SSH tunnel or an appropriately protected proxy.
 
-## :ship: Docker Usage
+The browser-facing base URL is configured in `src/assets/runtime-config.json`. For a reverse proxy or another local path, set `monitoringBaseUrl` to an absolute URL or path and keep the NATS monitoring listener behind that protected boundary.
 
-To use Docker for running the project, follow these steps:
+## Checks
 
-1. Create a `.env` file and define the required environment variables inside it:
+```bash
+npm run typecheck
+npm test
+npm run build
+```
 
-     ```bash
-    URL_JSON=[{ "text": "test", "url": "http://localhost:8222/streaming" },{ "text": "prod", "url": "http://localhost:8223/streaming" }]
-    ```
-     
-3. Run the project with Docker command
+The repository does not currently define an ESLint configuration; `typecheck`, unit tests, and the Angular production build are the available static gates.
 
-    ```bash
-    docker run --env-file .env -p 4200:80 -d defactotechnology/nats-ui:tagname
-    ```
-## :city_sunset: Screens
+## Docker
 
-![Serverz](screenshot/1.png)
-![Serverz](screenshot/3.png)
+The image serves the compiled UI with nginx. Set the browser-facing monitoring path or URL at container startup:
 
-## :star: Contributing
+```bash
+docker run --rm -p 4200:80 \\
+  -e MONITORING_BASE_URL=/monitoring \\
+  xjitu/nats-ui:<tag>
+```
 
-Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request.
+The container does not open, configure, or tunnel port `8222`. Supply `/monitoring` through a protected reverse proxy when the UI is deployed beyond local development.
 
-## :black_nib: License
+## Scope
+
+The UI is an observability surface only. NATS deployment, listener configuration, network exposure, SSH access, and reverse-proxy policy remain owned by the infrastructure repository and operational environment.
+
+## License
 
 This project is licensed under the [MIT License](LICENSE).
